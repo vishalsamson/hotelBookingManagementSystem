@@ -1,14 +1,17 @@
 package com.cg.hbm.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.cg.hbm.dto.BookingDetailsDTO;
+import com.cg.hbm.dto.BookingDetailsRequestDTO;
+import com.cg.hbm.dto.BookingDetailsResponseDTO;
 import com.cg.hbm.entity.BookingDetails;
 import com.cg.hbm.entity.Hotel;
 import com.cg.hbm.entity.User;
@@ -34,7 +37,7 @@ public class BookingDetailsServiceImpl implements IBookingDetailsService {
 	ModelMapper modelMapper;
 
 	@Override
-	public BookingDetailsDTO createBookingDetails(BookingDetailsDTO bookingDetailsDTO,int userId,int hotelId) {
+	public BookingDetailsResponseDTO createBookingDetails(BookingDetailsRequestDTO bookingDetailsDTO,int userId,int hotelId) {
 		User user=userRepository.findById(userId)
 				.orElseThrow(()->new ResourceNotFoundException("User","userId",userId));
 		
@@ -45,13 +48,14 @@ public class BookingDetailsServiceImpl implements IBookingDetailsService {
 
 		bookingDetails.setUser(user);
 		bookingDetails.setHotel(hotel);
+		bookingDetails.setPayment(bookingDetailsDTO.getPayment());
 		
 		BookingDetails savedBookingDetails=bookingDetailsRepository.save(bookingDetails);
-		return modelMapper.map(savedBookingDetails, BookingDetailsDTO.class);
+		return modelMapper.map(savedBookingDetails, BookingDetailsResponseDTO.class);
 	}
 
 	@Override
-	public BookingDetailsDTO updateBookingDetails(BookingDetailsDTO bookingDetailsDTO, int bookingId) {
+	public BookingDetailsResponseDTO updateBookingDetails(BookingDetailsRequestDTO bookingDetailsDTO, int bookingId) {
 		BookingDetails bookingDetails=bookingDetailsRepository.findById(bookingId)
 				.orElseThrow(()->new ResourceNotFoundException("BookingDetails","bookingId",bookingId));
 		
@@ -60,9 +64,10 @@ public class BookingDetailsServiceImpl implements IBookingDetailsService {
 		bookingDetails.setNoOfAdults(bookingDetailsDTO.getNoOfAdults());
 		bookingDetails.setNoOfChildren(bookingDetailsDTO.getNoOfChildren());
 		bookingDetails.setAmount(bookingDetailsDTO.getAmount());
+		bookingDetails.setPayment(bookingDetailsDTO.getPayment());
 		
 		BookingDetails savedBookingDetails=bookingDetailsRepository.save(bookingDetails);
-		return modelMapper.map(savedBookingDetails, BookingDetailsDTO.class);
+		return modelMapper.map(savedBookingDetails, BookingDetailsResponseDTO.class);
 	}
 
 	@Override
@@ -73,46 +78,47 @@ public class BookingDetailsServiceImpl implements IBookingDetailsService {
 	}
 
 	@Override
-	public BookingDetailsDTO getBookingDetailsById(int bookingId) {
+	public BookingDetailsResponseDTO getBookingDetailsById(int bookingId) {
 		BookingDetails bookingDetails=bookingDetailsRepository.findById(bookingId)
 				.orElseThrow(()->new ResourceNotFoundException("BookingDetails","bookingId",bookingId));
-		return modelMapper.map(bookingDetails, BookingDetailsDTO.class);
+		return modelMapper.map(bookingDetails, BookingDetailsResponseDTO.class);
 	}
 
 	@Override
-	public List<BookingDetailsDTO> getAllBookingDetails() {
+	public List<BookingDetailsResponseDTO> getAllBookingDetails() {
 		List<BookingDetails> allbookingDetails=bookingDetailsRepository.findAll();
 		return allbookingDetails.stream()
-				.map(bookingDetails->modelMapper.map(bookingDetails, BookingDetailsDTO.class))
+				.map(bookingDetails->modelMapper.map(bookingDetails, BookingDetailsResponseDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<BookingDetailsDTO> getBookingsForUser(int userId) {
+	public List<BookingDetailsResponseDTO> getBookingsForUser(int userId) {
 		 User user = userRepository.findById(userId)
 		            .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 		    List<BookingDetails> userBookings = bookingDetailsRepository.findByUser(user);
 		    return userBookings.stream()
-		            .map(booking -> modelMapper.map(booking, BookingDetailsDTO.class))
+		            .map(booking -> modelMapper.map(booking, BookingDetailsResponseDTO.class))
 		            .collect(Collectors.toList());
 	}
 	
 	@Override
-	public List<BookingDetailsDTO> getBookingsForHotel(int hotelId) {
+	public List<BookingDetailsResponseDTO> getBookingsForHotel(int hotelId) {
 	    Hotel hotel = hotelRepository.findById(hotelId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Hotel", "hotelId", hotelId));
 	    List<BookingDetails> hotelBookings = bookingDetailsRepository.findByHotel(hotel);
 	    return hotelBookings.stream()
-	            .map(booking -> modelMapper.map(booking, BookingDetailsDTO.class))
+	            .map(booking -> modelMapper.map(booking, BookingDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 
 	@Override
-	public List<BookingDetailsDTO> getAllBookingDetailsSortedByAmount() {
+	public List<BookingDetailsResponseDTO> getAllBookingDetailsSortedByAmount() {
 		List<BookingDetails> allBookingDetails = bookingDetailsRepository.findAll(Sort.by(Sort.Direction.ASC, "amount"));
 	    return allBookingDetails.stream()
-	            .map(booking -> modelMapper.map(booking, BookingDetailsDTO.class))
+	            .map(booking -> modelMapper.map(booking, BookingDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
+
 
 }

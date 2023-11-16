@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
-	@Id
+public class Payment {
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	private String roleName;
+	private boolean paymentStatus;
 }

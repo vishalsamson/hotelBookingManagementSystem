@@ -38,5 +38,8 @@ public class Hotel {
 	private List<RoomDetails> roomDetailsList;
 	
 	@OneToMany(mappedBy = "hotel",cascade = CascadeType.PERSIST)
+	private List<BookingDetails> bookingDetails;
+	
+	@OneToMany(mappedBy = "hotel",cascade = CascadeType.PERSIST)
 	private Set<Review> reviews;
 }

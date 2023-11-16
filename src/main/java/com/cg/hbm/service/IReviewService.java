@@ -6,15 +6,17 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.cg.hbm.dto.ReviewDTO;
+import com.cg.hbm.dto.ReviewRequestDTO;
+import com.cg.hbm.dto.ReviewResponseDTO;
 
 @Service
 public interface IReviewService {
-	ReviewDTO createReview(ReviewDTO reviewDto,int userId,int hotelId);
-	ReviewDTO updateReview(ReviewDTO reviewDto,int reviewId);
+	ReviewResponseDTO createReview(ReviewRequestDTO reviewDto,int userId,int hotelId);
+	ReviewResponseDTO updateReview(ReviewDTO reviewDto,int reviewId);
 	void deleteReview(int reviewId);
-	ReviewDTO getReviewById(int reviewId);
-	List<ReviewDTO> getAllReviews();
-	List<ReviewDTO> getReviewsForHotel(int hotelId);
+	ReviewResponseDTO getReviewById(int reviewId);
+	List<ReviewResponseDTO> getAllReviews();
+	List<ReviewResponseDTO> getReviewsForHotel(int hotelId);
 	double getAverageRatingForHotel(int hotelId);
 
 }

@@ -1,13 +1,16 @@
 package com.cg.hbm.dto;
 
 import java.util.List;
+import java.util.Set;
 
+import com.cg.hbm.entity.BookingDetails;
+import com.cg.hbm.entity.Review;
 import com.cg.hbm.entity.RoomDetails;
 
 import lombok.Data;
 
 @Data
-public class HotelDTO {
+public class HotelResponseDTO {
 	
 	private int hotelId;
 	private String city;
@@ -19,5 +22,4 @@ public class HotelDTO {
 	private String phone1;
 	private String phone2;
 	private String website;
-	private List<RoomDetails> roomDetailsList;
 }

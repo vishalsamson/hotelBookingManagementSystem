@@ -8,8 +8,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cg.hbm.dto.HotelDTO;
+import com.cg.hbm.dto.HotelResponseDTO;
 import com.cg.hbm.dto.ReviewDTO;
+import com.cg.hbm.dto.ReviewRequestDTO;
+import com.cg.hbm.dto.ReviewResponseDTO;
 import com.cg.hbm.entity.Hotel;
 import com.cg.hbm.entity.Review;
 import com.cg.hbm.entity.User;
@@ -35,7 +37,7 @@ public class ReviewServiceImpl implements IReviewService{
 	ModelMapper modelMapper;
 
 	@Override
-	public ReviewDTO createReview(ReviewDTO reviewDto, int userId, int hotelId) {
+	public ReviewResponseDTO createReview(ReviewRequestDTO reviewDto, int userId, int hotelId) {
 		User user=userRepository.findById(userId)
 				.orElseThrow(()->new ResourceNotFoundException("User","id",userId));
 		
@@ -48,13 +50,13 @@ public class ReviewServiceImpl implements IReviewService{
 		review.setHotel(hotel);
 		
 		Review savedReview=reviewRepository.save(review);
-		return modelMapper.map(savedReview, ReviewDTO.class);
+		return modelMapper.map(savedReview, ReviewResponseDTO.class);
 		
 		
 	}
 
 	@Override
-	public ReviewDTO updateReview(ReviewDTO reviewDto, int reviewId) {
+	public ReviewResponseDTO updateReview(ReviewDTO reviewDto, int reviewId) {
 		Review review=reviewRepository.findById(reviewId)
 				.orElseThrow(()->new ResourceNotFoundException("Review","reviewId",reviewId));
 		
@@ -62,7 +64,7 @@ public class ReviewServiceImpl implements IReviewService{
 		review.setRating(reviewDto.getRating());
 		
 		Review savedReview=reviewRepository.save(review);
-		return modelMapper.map(savedReview, ReviewDTO.class);
+		return modelMapper.map(savedReview, ReviewResponseDTO.class);
 	}
 
 	@Override
@@ -73,27 +75,27 @@ public class ReviewServiceImpl implements IReviewService{
 	}
 
 	@Override
-	public ReviewDTO getReviewById(int reviewId) {
+	public ReviewResponseDTO getReviewById(int reviewId) {
 		Review review=reviewRepository.findById(reviewId)
 				.orElseThrow(()->new ResourceNotFoundException("Review","reviewId",reviewId));
-		return modelMapper.map(review, ReviewDTO.class);
+		return modelMapper.map(review, ReviewResponseDTO.class);
 	}
 
 	@Override
-	public List<ReviewDTO> getAllReviews() {
+	public List<ReviewResponseDTO> getAllReviews() {
 		List<Review> allReviews=reviewRepository.findAll();
 		return allReviews.stream()
-				.map(review->modelMapper.map(review, ReviewDTO.class))
+				.map(review->modelMapper.map(review, ReviewResponseDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<ReviewDTO> getReviewsForHotel(int hotelId) {
+	public List<ReviewResponseDTO> getReviewsForHotel(int hotelId) {
 		Hotel hotel = hotelRepository.findById(hotelId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Hotel", "hotelId", hotelId));
 	    Set<Review> reviews = hotel.getReviews();
 	    return reviews.stream()
-	            .map(review -> modelMapper.map(review, ReviewDTO.class))
+	            .map(review -> modelMapper.map(review, ReviewResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -31,13 +32,14 @@ public class BookingDetails {
 	@JoinColumn(name="user_id")
 	private User user;
 	
+	
 	private LocalDate bookedFrom;
 	private LocalDate bookedTo;
 	private int noOfAdults;
 	private int noOfChildren;
 	private double amount;
 	
-	@OneToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "hotel_id")
 	private Hotel hotel;
 	
@@ -45,6 +47,11 @@ public class BookingDetails {
 	//@JoinColumn(name = "room_id")
 //	RoomDetails roomDetails;
 	
-	@OneToMany(cascade = CascadeType.PERSIST)
+	@OneToMany(cascade=CascadeType.PERSIST)
 	private List<RoomDetails> roomDetailsList;
+	
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="payment_id")
+	private Payment payment;
+	
 }

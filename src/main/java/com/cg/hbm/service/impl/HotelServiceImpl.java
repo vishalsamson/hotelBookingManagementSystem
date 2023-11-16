@@ -8,7 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cg.hbm.dto.HotelDTO;
+import com.cg.hbm.dto.HotelResponseDTO;
+import com.cg.hbm.dto.HotelRequestDTO;
 import com.cg.hbm.entity.Hotel;
 import com.cg.hbm.exception.ResourceNotFoundException;
 import com.cg.hbm.repository.IHotelRepository;
@@ -24,14 +25,14 @@ public class HotelServiceImpl implements IHotelService {
 	ModelMapper modelMapper;
 
 	@Override
-	public HotelDTO createHotel(HotelDTO hotelDto) {
+	public HotelResponseDTO createHotel(HotelRequestDTO hotelDto) {
 		Hotel hotel=modelMapper.map(hotelDto, Hotel.class);
 		Hotel savedHotel=hotelRepository.save(hotel);
-		return modelMapper.map(savedHotel, HotelDTO.class);
+		return modelMapper.map(savedHotel, HotelResponseDTO.class);
 	}
 
 	@Override
-	public HotelDTO updateHotel(HotelDTO hotelDto, int hotelId) {
+	public HotelResponseDTO updateHotel(HotelRequestDTO hotelDto, int hotelId) {
 		Hotel hotel=hotelRepository.findById(hotelId)
 				.orElseThrow(()->new ResourceNotFoundException("Hotel","hotelId",hotelId));
 		
@@ -46,7 +47,7 @@ public class HotelServiceImpl implements IHotelService {
 		hotel.setWebsite(hotelDto.getWebsite());
 		
 		Hotel savedHotel=hotelRepository.save(hotel);
-		return modelMapper.map(savedHotel, HotelDTO.class);
+		return modelMapper.map(savedHotel, HotelResponseDTO.class);
 	}
 
 	@Override
@@ -58,33 +59,33 @@ public class HotelServiceImpl implements IHotelService {
 	}
 
 	@Override
-	public HotelDTO getHotelById(int hotelId) {
+	public HotelResponseDTO getHotelById(int hotelId) {
 		Hotel hotel=hotelRepository.findById(hotelId)
 				.orElseThrow(()->new ResourceNotFoundException("Hotel","hotelId",hotelId));
-		return modelMapper.map(hotel, HotelDTO.class);
+		return modelMapper.map(hotel, HotelResponseDTO.class);
 	}
 
 	@Override
-	public List<HotelDTO> getAllHotels() {
+	public List<HotelResponseDTO> getAllHotels() {
 		List<Hotel> allHotels=hotelRepository.findAll();
 		return allHotels.stream()
-				.map(hotel->modelMapper.map(hotel, HotelDTO.class))
+				.map(hotel->modelMapper.map(hotel, HotelResponseDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<HotelDTO> searchHotelsByCity(String city) {
+	public List<HotelResponseDTO> searchHotelsByCity(String city) {
 		List<Hotel> hotelsInCity = hotelRepository.findByCity(city);
 	    return hotelsInCity.stream()
-	            .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
+	            .map(hotel -> modelMapper.map(hotel, HotelResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 
 	@Override
-	public List<HotelDTO> getHotelsByAverageRate(double minRate, double maxRate) {
+	public List<HotelResponseDTO> getHotelsByAverageRate(double minRate, double maxRate) {
 		List<Hotel> hotelsWithinRates = hotelRepository.findByAverageRatePerDayBetween(minRate, maxRate);
 	    return hotelsWithinRates.stream()
-	            .map(hotel -> modelMapper.map(hotel, HotelDTO.class))
+	            .map(hotel -> modelMapper.map(hotel, HotelResponseDTO.class))
 	            .collect(Collectors.toList());
 	} 
 

@@ -7,7 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cg.hbm.dto.RoomDetailsDTO;
+import com.cg.hbm.dto.RoomDetailsRequestDTO;
+import com.cg.hbm.dto.RoomDetailsResponseDTO;
 import com.cg.hbm.entity.Hotel;
 import com.cg.hbm.entity.RoomDetails;
 import com.cg.hbm.exception.ResourceNotFoundException;
@@ -28,18 +29,18 @@ public class RoomDetailsServiceImpl implements IRoomDetailsService {
 	ModelMapper modelMapper;
 
 	@Override
-	public RoomDetailsDTO createRoomDetails(RoomDetailsDTO roomDetailsDTO, int hotelId) {
+	public RoomDetailsResponseDTO createRoomDetails(RoomDetailsRequestDTO roomDetailsDTO, int hotelId) {
 		Hotel hotel=hotelRepository.findById(hotelId)
 				.orElseThrow(()->new ResourceNotFoundException("Hotel","hotelId",hotelId));
 		
 		RoomDetails roomDetails=modelMapper.map(roomDetailsDTO, RoomDetails.class);
 		roomDetails.setHotel(hotel);
 		RoomDetails savedRoomDetails=roomDetailsRepository.save(roomDetails);
-		return modelMapper.map(savedRoomDetails, RoomDetailsDTO.class);
+		return modelMapper.map(savedRoomDetails, RoomDetailsResponseDTO.class);
 	}
 
 	@Override
-	public RoomDetailsDTO updateRoomDetails(RoomDetailsDTO roomDetailsDTO, int roomId) {
+	public RoomDetailsRequestDTO updateRoomDetails(RoomDetailsRequestDTO roomDetailsDTO, int roomId) {
 		RoomDetails roomDetails=roomDetailsRepository.findById(roomId)
 				.orElseThrow(()->new ResourceNotFoundException("RoomDetails","roomId",roomId));
 		roomDetails.setRoomNo(roomDetailsDTO.getRoomNo());
@@ -50,7 +51,7 @@ public class RoomDetailsServiceImpl implements IRoomDetailsService {
 		roomDetails.setFileType(roomDetailsDTO.getFileType());
 		
 		RoomDetails savedRoomDetails=roomDetailsRepository.save(roomDetails);
-		return modelMapper.map(savedRoomDetails, RoomDetailsDTO.class);
+		return modelMapper.map(savedRoomDetails, RoomDetailsRequestDTO.class);
 		
 	}
 
@@ -64,67 +65,67 @@ public class RoomDetailsServiceImpl implements IRoomDetailsService {
 	}
 
 	@Override
-	public RoomDetailsDTO getRoomDetailsById(int roomId) {
+	public RoomDetailsResponseDTO getRoomDetailsById(int roomId) {
 		RoomDetails roomDetails=roomDetailsRepository.findById(roomId)
 				.orElseThrow(()->new ResourceNotFoundException("RoomDetails","roomId",roomId));
-		return modelMapper.map(roomDetails, RoomDetailsDTO.class);
+		return modelMapper.map(roomDetails, RoomDetailsResponseDTO.class);
 	}
 
 	@Override
-	public List<RoomDetailsDTO> getAllRoomDetails() {
+	public List<RoomDetailsResponseDTO> getAllRoomDetails() {
 		List<RoomDetails> allRoomDetails=roomDetailsRepository.findAll();
 		return allRoomDetails.stream()
-				.map(roomDetails->modelMapper.map(roomDetails, RoomDetailsDTO.class))
+				.map(roomDetails->modelMapper.map(roomDetails, RoomDetailsResponseDTO.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<RoomDetailsDTO> getRoomsInHotel(int hotelId) {
+	public List<RoomDetailsResponseDTO> getRoomsInHotel(int hotelId) {
 		Hotel hotel = hotelRepository.findById(hotelId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Hotel", "hotelId", hotelId));
 	    List<RoomDetails> roomDetails = hotel.getRoomDetailsList();
 	    return roomDetails.stream()
-	            .map(room -> modelMapper.map(room, RoomDetailsDTO.class))
+	            .map(room -> modelMapper.map(room, RoomDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 
 	@Override
-	public List<RoomDetailsDTO> getAvailableRoomsInHotel(int hotelId) {
+	public List<RoomDetailsResponseDTO> getAvailableRoomsInHotel(int hotelId) {
 	    Hotel hotel = hotelRepository.findById(hotelId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Hotel", "hotelId", hotelId));
 	    List<RoomDetails> availableRooms = hotel.getRoomDetailsList().stream()
 	            .filter(RoomDetails::isIsavailable)
 	            .collect(Collectors.toList());
 	    return availableRooms.stream()
-	            .map(room -> modelMapper.map(room, RoomDetailsDTO.class))
+	            .map(room -> modelMapper.map(room, RoomDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 
 	@Override
-	public List<RoomDetailsDTO> getRoomsByTypeInHotel(int hotelId, String roomType) {
+	public List<RoomDetailsResponseDTO> getRoomsByTypeInHotel(int hotelId, String roomType) {
 	    Hotel hotel = hotelRepository.findById(hotelId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Hotel", "hotelId", hotelId));
 	    List<RoomDetails> roomsByType = hotel.getRoomDetailsList().stream()
 	            .filter(room -> room.getRoomType().equalsIgnoreCase(roomType))
 	            .collect(Collectors.toList());
 	    return roomsByType.stream()
-	            .map(room -> modelMapper.map(room, RoomDetailsDTO.class))
+	            .map(room -> modelMapper.map(room, RoomDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 	
 	@Override
-	public List<RoomDetailsDTO> getRoomsByAvailabilityAndType(boolean isAvailable, String roomType) {
+	public List<RoomDetailsResponseDTO> getRoomsByAvailabilityAndType(boolean isAvailable, String roomType) {
 	    List<RoomDetails> rooms = roomDetailsRepository.findByIsavailableAndRoomType(isAvailable, roomType);
 	    return rooms.stream()
-	            .map(room -> modelMapper.map(room, RoomDetailsDTO.class))
+	            .map(room -> modelMapper.map(room, RoomDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 
 	@Override
-	public List<RoomDetailsDTO> getRoomsByPriceRange(double minRate, double maxRate) {
+	public List<RoomDetailsResponseDTO> getRoomsByPriceRange(double minRate, double maxRate) {
 	    List<RoomDetails> rooms = roomDetailsRepository.findByRatePerDayBetween(minRate, maxRate);
 	    return rooms.stream()
-	            .map(room -> modelMapper.map(room, RoomDetailsDTO.class))
+	            .map(room -> modelMapper.map(room, RoomDetailsResponseDTO.class))
 	            .collect(Collectors.toList());
 	}
 	
